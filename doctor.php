@@ -337,8 +337,7 @@
 
     if(!mysqli_query($link, "SELECT 1 FROM VISIT_BACKUP LIMIT 1")) {
         $vbackup = mysqli_query($link, "
-            CREATE TABLE VISIT_BACKUP;
-            INSERT INTO VISIT_BACKUP SELECT * FROM VISIT;
+            CREATE TABLE VISIT_BACKUP AS SELECT * FROM VISIT;
         ");
         if(!$vbackup) {
             error(mysqli_error($link));
@@ -350,8 +349,7 @@
     else {
         $vbackup = mysqli_query($link, "
             DROP TABLE VISIT_BACKUP;
-            CREATE TABLE VISIT_BACKUP;
-            INSERT INTO VISIT_BACKUP SELECT * FROM VISIT;
+            CREATE TABLE VISIT_BACKUP AS SELECT * FROM VISIT;
         ");
         if(!$vbackup) {
             error(mysqli_error($link));
@@ -362,8 +360,7 @@
     }
     if(!mysqli_query($link, "SELECT 1 FROM TEST_BACKUP LIMIT 1")) {
         $tbackup = mysqli_query($link, "
-            CREATE TABLE TEST_BACKUP;
-            INSERT INTO TEST_BACKUP SELECT * FROM TEST;
+            CREATE TABLE TEST_BACKUP AS SELECT * FROM TEST;
         ");
         if(!$tbackup) {
             error(mysqli_error($link));
@@ -375,8 +372,7 @@
     else {
         $tbackup = mysqli_query($link, "
             DROP TABLE TEST_BACKUP;
-            CREATE TABLE TEST_BACKUP;
-            INSERT INTO TEST_BACKUP SELECT * FROM TEST;
+            CREATE TABLE TEST_BACKUP AS SELECT * FROM TEST;
         ");
         if(!$tbackup) {
             error(mysqli_error($link));
@@ -387,8 +383,7 @@
     }
     if(!mysqli_query($link, "SELECT 1 FROM PRESCRIPTION_BACKUP LIMIT 1")) {
         $pbackup = mysqli_query($link, "
-            CREATE TABLE PRESCRIPTION_BACKUP;
-            INSERT INTO PRESCRIPTION_BACKUP SELECT * FROM PRESCRIPTION;
+            CREATE TABLE PRESCRIPTION_BACKUP AS SELECT * FROM PRESCRIPTION;
         ");
         if(!$pbackup) {
             error(mysqli_error($link));
@@ -400,8 +395,7 @@
     else {
         $pbackup = mysqli_query($link, "
             DROP TABLE PRESCRIPTION_BACKUP;
-            CREATE TABLE PRESCRIPTION_BACKUP;
-            INSERT INTO PRESCRIPTION_BACKUP SELECT * FROM PRESCRIPTION;
+            CREATE TABLE PRESCRIPTION_BACKUP AS SELECT * FROM PRESCRIPTION;
         ");
         if(!$pbackup) {
             error(mysqli_error($link));
@@ -412,8 +406,7 @@
     }
     if(!mysqli_query($link, "SELECT 1 FROM AUDIT_BACKUP LIMIT 1")) {
         $abackup = mysqli_query($link, "
-            CREATE TABLE AUDIT_BACKUP;
-            INSERT INTO AUDIT_BACKUP SELECT * FROM AUDIT;
+            CREATE TABLE AUDIT_BACKUP AS SELECT * FROM AUDIT;
         ");
         if(!$abackup) {
             error(mysqli_error($link));
@@ -425,8 +418,7 @@
     else {
         $abackup = mysqli_query($link, "
             DROP TABLE AUDIT_BACKUP;
-            CREATE TABLE AUDIT_BACKUP;
-            INSERT INTO AUDIT_BACKUP SELECT * FROM AUDIT;
+            CREATE TABLE AUDIT_BACKUP AS SELECT * FROM AUDIT;
         ");
         if(!$abackup) {
             error(mysqli_error($link));
@@ -437,8 +429,7 @@
     }
     if(!mysqli_query($link, "SELECT 1 FROM DOCTORSPECIALITY_BACKUP LIMIT 1")) {
         $dsbackup = mysqli_query($link, "
-            CREATE TABLE DOCTORSPECIALITY_BACKUP;
-            INSERT INTO DOCTORSPECIALITY_BACKUP SELECT * FROM DOCTORSPECIALITY;
+            CREATE TABLE DOCTORSPECIALITY_BACKUP AS SELECT * FROM DOCTORSPECIALITY;
         ");
         if(!$dsbackup) {
             error(mysqli_error($link));
@@ -450,8 +441,7 @@
     else {
         $dsbackup = mysqli_query($link, "
             DROP TABLE DOCTORSPECIALITY_BACKUP;
-            CREATE TABLE DOCTORSPECIALITY_BACKUP;
-            INSERT INTO DOCTORSPECIALITY_BACKUP SELECT * FROM DOCTORSPECIALITY;
+            CREATE TABLE DOCTORSPECIALITY_BACKUP AS SELECT * FROM DOCTORSPECIALITY;
         ");
         if(!$dsbackup) {
             error(mysqli_error($link));
@@ -462,8 +452,7 @@
     }
     if(!mysqli_query($link, "SELECT 1 FROM DOCTOR_BACKUP LIMIT 1")) {
         $dbackup = mysqli_query($link, "
-            CREATE TABLE DOCTOR_BACKUP;
-            INSERT INTO DOCTOR_BACKUP SELECT * FROM DOCTOR;
+            CREATE TABLE DOCTOR_BACKUP AS SELECT * FROM DOCTOR;
         ");
         if(!$dbackup) {
             error(mysqli_error($link));
@@ -475,8 +464,7 @@
     else {
         $dbackup = mysqli_query($link, "
             DROP TABLE DOCTOR_BACKUP;
-            CREATE TABLE DOCTOR_BACKUP;
-            INSERT INTO DOCTOR_BACKUP SELECT * FROM DOCTOR;
+            CREATE TABLE DOCTOR_BACKUP AS SELECT * FROM DOCTOR;
         ");
         if(!$dbackup) {
             error(mysqli_error($link));
@@ -487,8 +475,7 @@
     }
     if(!mysqli_query($link, "SELECT 1 FROM SPECIALITY_BACKUP LIMIT 1")) {
         $sbackup = mysqli_query($link, "
-            CREATE TABLE SPECIALITY_BACKUP;
-            INSERT INTO SPECIALITY_BACKUP SELECT * FROM SPECIALITY;
+            CREATE TABLE SPECIALITY_BACKUP AS SELECT * FROM SPECIALITY;
         ");
         if(!$sbackup) {
             error(mysqli_error($link));
@@ -500,8 +487,7 @@
     else {
         $sbackup = mysqli_query($link, "
             DROP TABLE SPECIALITY_BACKUP;
-            CREATE TABLE SPECIALITY_BACKUP;
-            INSERT INTO SPECIALITY_BACKUP SELECT * FROM SPECIALITY;
+            CREATE TABLE SPECIALITY_BACKUP AS SELECT * FROM SPECIALITY;
         ");
         if(!$sbackup) {
             error(mysqli_error($link));
@@ -512,8 +498,7 @@
     }
     if(!mysqli_query($link, "SELECT 1 FROM PATIENT_BACKUP LIMIT 1")) {
         $pbackup = mysqli_query($link, "
-            CREATE TABLE PATIENT_BACKUP;
-            INSERT INTO PATIENT_BACKUP SELECT * FROM PATIENT;
+            CREATE TABLE PATIENT_BACKUP AS SELECT * FROM PATIENT;
         ");
         if(!$pbackup) {
             error(mysqli_error($link));
@@ -525,8 +510,7 @@
     else {
         $pbackup = mysqli_query($link, "
             DROP TABLE PATIENT_BACKUP;
-            CREATE TABLE PATIENT_BACKUP;
-            INSERT INTO PATIENT_BACKUP SELECT * FROM PATIENT;
+            CREATE TABLE PATIENT_BACKUP AS SELECT * FROM PATIENT;
         ");
         if(!$pbackup) {
             error(mysqli_error($link));
