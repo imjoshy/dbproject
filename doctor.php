@@ -118,8 +118,39 @@
         }
     }
 
- 
+    //Create table for AUDIT (#6)
+    if(!mysqli_query($link, "SELECT 1 FROM AUDIT LIMIT 1")) {
+        $audit = mysqli_query($link, "
+            CREATE TABLE AUDIT(
+                DFname              varchar(50)     NOT NULL,
+                Action              varchar(75)     NOT NULL,
+                Speciality          varchar(50),
+                Date                varchar(25),
+                PRIMARY KEY (Action));
+        ");
+    }
 
+
+    mysqli_query($link, "
+        CREATE TRIGGER insertaudits AFTER INSERT ON DOCTORSPECIALITY FOR EACH ROW
+        BEGIN
+            INSERT INTO AUDIT(DFname, Action, Speciality, Date) VALUES (SELECT Dname
+                                                                        FROM DOCTOR
+                                                                        WHERE D_id = NEW.D_id), 'INSERT', (SELECT Speciality
+                                                                                                           FROM SPECIALITY
+                                                                                                           WHERE S_id = NEW.S_id), CURRENT_DATE());
+        END
+    ");
+    mysqli_query($link, "
+        CREATE TRIGGER updateaudits AFTER UPDATE ON DOCTORSPECIALITY FOR EACH ROW
+        BEGIN
+            INSERT INTO AUDIT(DFname, Action, Speciality, Date) VALUES (SELECT Dname
+                                                                        FROM DOCTOR
+                                                                        WHERE D_id = NEW.D_id), 'UPDATE', (SELECT Speciality
+                                                                                                           FROM SPECIALITY
+                                                                                                           WHERE S_id = NEW.S_id), CURRENT_DATE());
+        END
+    ");
     //INSERT INTO DB
     // mysqli_query($link, "INSERT INTO ________ (_______) VALUES (____________)");
 
@@ -270,6 +301,242 @@
     }
     echo "</table>";
 
+    //***************************NUMBER 6*************************
+        //TRIGGER IS ABOVE INSERTS ^^^^^^^^^^^^^^^^
+
+    echo "Create trigger on the DoctorSpeciality so that every time a doctor specialty is updated or added, a new entry is made in the audit table. The audit table will have the following (Hint-The trigger will be on DoctorSpecialty table).
+    a. Doctor’s FirstName
+    b. Action(indicate update or added)
+    c. Specialty
+    d. Date of modification";
+
+    echo "<table border='1'>
+    <tr>
+    <th>Dfname</th>
+    <th>Action</th>
+    <th>Speciality</th>
+    <th>Date</th>
+    </tr>";
+
+    $result = mysqli_query($link, "SELECT * FROM AUDIT;");
+    while($row = mysqli_fetch_array($result)) {
+        echo "<tr>";
+        echo "<td>" . $row['Dfname'] . "</td>";
+        echo "<td>" . $row['Action'] . "</td>";
+        echo "<td>" . $row['Speciality'] . "</td>";
+        echo "<td>" . $row['Date'] . "</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+
+    //***************************NUMBER 7*************************
+    echo "Create
+    a. If first time backup take backup of all the tables
+    b. If not the first time remove the previous backup tables and take new
+    a script to do the following (Write the script for this) backups.";
+
+    if(!mysqli_query($link, "SELECT 1 FROM VISIT_BACKUP LIMIT 1")) {
+        $vbackup = mysqli_query($link, "
+            CREATE TABLE VISIT_BACKUP;
+            INSERT INTO VISIT_BACKUP SELECT * FROM VISIT;
+        ");
+        if(!$vbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for VISIT table successfully created!";
+        }
+    }
+    else {
+        $vbackup = mysqli_query($link, "
+            DROP TABLE VISIT_BACKUP;
+            CREATE TABLE VISIT_BACKUP;
+            INSERT INTO VISIT_BACKUP SELECT * FROM VISIT;
+        ");
+        if(!$vbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for VISIT table successfully updated!";
+        }
+    }
+    if(!mysqli_query($link, "SELECT 1 FROM TEST_BACKUP LIMIT 1")) {
+        $tbackup = mysqli_query($link, "
+            CREATE TABLE TEST_BACKUP;
+            INSERT INTO TEST_BACKUP SELECT * FROM TEST;
+        ");
+        if(!$tbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for TEST table successfully created!";
+        }
+    }
+    else {
+        $tbackup = mysqli_query($link, "
+            DROP TABLE TEST_BACKUP;
+            CREATE TABLE TEST_BACKUP;
+            INSERT INTO TEST_BACKUP SELECT * FROM TEST;
+        ");
+        if(!$tbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for TEST table successfully updated!";
+        }
+    }
+    if(!mysqli_query($link, "SELECT 1 FROM PRESCRIPTION_BACKUP LIMIT 1")) {
+        $pbackup = mysqli_query($link, "
+            CREATE TABLE PRESCRIPTION_BACKUP;
+            INSERT INTO PRESCRIPTION_BACKUP SELECT * FROM PRESCRIPTION;
+        ");
+        if(!$pbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for PRESCRIPTION table successfully created!";
+        }
+    }
+    else {
+        $pbackup = mysqli_query($link, "
+            DROP TABLE PRESCRIPTION_BACKUP;
+            CREATE TABLE PRESCRIPTION_BACKUP;
+            INSERT INTO PRESCRIPTION_BACKUP SELECT * FROM PRESCRIPTION;
+        ");
+        if(!$pbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for PRESCRIPTION table successfully updated!";
+        }
+    }
+    if(!mysqli_query($link, "SELECT 1 FROM AUDIT_BACKUP LIMIT 1")) {
+        $abackup = mysqli_query($link, "
+            CREATE TABLE AUDIT_BACKUP;
+            INSERT INTO AUDIT_BACKUP SELECT * FROM AUDIT;
+        ");
+        if(!$abackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for AUDIT table successfully created!";
+        }
+    }
+    else {
+        $abackup = mysqli_query($link, "
+            DROP TABLE AUDIT_BACKUP;
+            CREATE TABLE AUDIT_BACKUP;
+            INSERT INTO AUDIT_BACKUP SELECT * FROM AUDIT;
+        ");
+        if(!$abackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for AUDIT table successfully updated!";
+        }
+    }
+    if(!mysqli_query($link, "SELECT 1 FROM DOCTORSPECIALITY_BACKUP LIMIT 1")) {
+        $dsbackup = mysqli_query($link, "
+            CREATE TABLE DOCTORSPECIALITY_BACKUP;
+            INSERT INTO DOCTORSPECIALITY_BACKUP SELECT * FROM DOCTORSPECIALITY;
+        ");
+        if(!$dsbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for DOCTORSPECIALITY table successfully created!";
+        }
+    }
+    else {
+        $dsbackup = mysqli_query($link, "
+            DROP TABLE DOCTORSPECIALITY_BACKUP;
+            CREATE TABLE DOCTORSPECIALITY_BACKUP;
+            INSERT INTO DOCTORSPECIALITY_BACKUP SELECT * FROM DOCTORSPECIALITY;
+        ");
+        if(!$dsbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for DOCTORSPECIALITY table successfully updated!";
+        }
+    }
+    if(!mysqli_query($link, "SELECT 1 FROM DOCTOR_BACKUP LIMIT 1")) {
+        $dbackup = mysqli_query($link, "
+            CREATE TABLE DOCTOR_BACKUP;
+            INSERT INTO DOCTOR_BACKUP SELECT * FROM DOCTOR;
+        ");
+        if(!$dbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for DOCTOR table successfully created!";
+        }
+    }
+    else {
+        $dbackup = mysqli_query($link, "
+            DROP TABLE DOCTOR_BACKUP;
+            CREATE TABLE DOCTOR_BACKUP;
+            INSERT INTO DOCTOR_BACKUP SELECT * FROM DOCTOR;
+        ");
+        if(!$dbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for DOCTOR table successfully updated!";
+        }
+    }
+    if(!mysqli_query($link, "SELECT 1 FROM SPECIALITY_BACKUP LIMIT 1")) {
+        $sbackup = mysqli_query($link, "
+            CREATE TABLE SPECIALITY_BACKUP;
+            INSERT INTO SPECIALITY_BACKUP SELECT * FROM SPECIALITY;
+        ");
+        if(!$sbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for SPECIALITY table successfully created!";
+        }
+    }
+    else {
+        $sbackup = mysqli_query($link, "
+            DROP TABLE SPECIALITY_BACKUP;
+            CREATE TABLE SPECIALITY_BACKUP;
+            INSERT INTO SPECIALITY_BACKUP SELECT * FROM SPECIALITY;
+        ");
+        if(!$sbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for SPECIALITY table successfully updated!";
+        }
+    }
+    if(!mysqli_query($link, "SELECT 1 FROM PATIENT_BACKUP LIMIT 1")) {
+        $pbackup = mysqli_query($link, "
+            CREATE TABLE PATIENT_BACKUP;
+            INSERT INTO PATIENT_BACKUP SELECT * FROM PATIENT;
+        ");
+        if(!$pbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for PATIENT table successfully created!";
+        }
+    }
+    else {
+        $pbackup = mysqli_query($link, "
+            DROP TABLE PATIENT_BACKUP;
+            CREATE TABLE PATIENT_BACKUP;
+            INSERT INTO PATIENT_BACKUP SELECT * FROM PATIENT;
+        ");
+        if(!$pbackup) {
+            error(mysqli_error($link));
+        }
+        else {
+            echo "Backup for PATIENT table successfully updated!";
+        }
+    }
+
+    //DELETE ALL TABLES
     // if(!mysqli_query($link, "DROP TABLE VISIT;")) {
     //     error(mysqli_error($link));
     // }
@@ -279,14 +546,21 @@
     // if(!mysqli_query($link, "DROP TABLE PRESCRIPTION;")) {
     //     error(mysqli_error($link));
     // }
+    // if(!mysqli_query($link, "DROP TABLE AUDIT;")) {
+    //     error(mysqli_error($link));
+    // }
+    // if(!mysqli_query($link, "DROP TABLE DOCTORSPECIALITY;")) {
+    //     error(mysqli_error($link));
+    // }
     // if(!mysqli_query($link, "DROP TABLE DOCTOR;")) {
+    //     error(mysqli_error($link));
+    // }
+    // if(!mysqli_query($link, "DROP TABLE SPECIALITY;")) {
     //     error(mysqli_error($link));
     // }
     // if(!mysqli_query($link, "DROP TABLE PATIENT;")) {
     //     error(mysqli_error($link));
     // }
-
-
 
     //Close the server
     mysqli_close($link);
