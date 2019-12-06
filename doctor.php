@@ -21,7 +21,7 @@
     //Create the PATIENTs
     if(!mysqli_query($link, "SELECT 1 FROM PATIENT LIMIT 1")) {
         $patient = mysqli_query($link, "
-            CREATE TABLE PATIENT(
+            CREATE TABLE IF NOT EXISTS PATIENT(
                 P_id                int             NOT NULL,
                 Pnum                int             NOT NULL,
                 Fname               varchar(50),
@@ -37,7 +37,7 @@
     if(!mysqli_query($link, "SELECT 1 FROM DOCTOR LIMIT 1")) {      //To check if table exists
                                                                     //https://stackoverflow.com/questions/8829102/check-if-table-exists-without-using-select-from
         $doctor = mysqli_query($link, "
-            CREATE TABLE DOCTOR(                   
+            CREATE TABLE IF NOT EXISTS DOCTOR(                   
                 D_id                varchar(6)      NOT NULL,
                 P_id                int             NOT NULL,
                 Fname               varchar(50),
@@ -53,7 +53,7 @@
     //Create table SPECIALTY
     if(!mysqli_query($link, "SELECT 1 FROM SPECIALTY LIMIT 1")) {
         $specialty = mysqli_query($link, "
-            CREATE TABLE SPECIALTY(
+            CREATE TABLE IF NOT EXISTS SPECIALTY(
                 S_id                int             NOT NULL,
                 Sname               varchar(50)     NOT NULL,
                 PRIMARY KEY (S_id));
@@ -63,7 +63,7 @@
     //Create table DOCTORSPECIALTY
     if(!mysqli_query($link, "SELECT 1 FROM DOCTORSPECIALTY LIMIT 1")) {
         $DOCTORSPECIALTY = mysqli_query($link, "
-            CREATE TABLE DOCTORSPECIALTY(
+            CREATE TABLE IF NOT EXISTSDOCTORSPECIALTY(
                 D_id                varchar(6)      NOT NULL,
                 S_id                int             NOT NULL,
                 FOREIGN KEY (D_id) REFERENCES DOCTOR (D_id),
@@ -89,7 +89,7 @@
     //Create table for TESTs
     if(!mysqli_query($link, "SELECT 1 FROM TEST LIMIT 1")) {
         $test = mysqli_query($link, "
-            CREATE TABLE TEST(
+            CREATE TABLE IF NOT EXISTS TEST(
                 Date                varchar(25),
                 Tname               varchar(50),
                 P_id                int             NOT NULL,
@@ -105,7 +105,7 @@
     //Create table for PRESCRIPTIONs
     if(!mysqli_query($link, "SELECT 1 FROM PRESCRIPTION LIMIT 1")) {
         $prescription = mysqli_query($link, "
-            CREATE TABLE PRESCRIPTION(
+            CREATE TABLE IF NOT EXISTS PRESCRIPTION(
                 Date                varchar(25),
                 Pname               varchar(50),
                 P_id                int             NOT NULL,
@@ -121,7 +121,7 @@
     //Create table for AUDIT (#6)
     if(!mysqli_query($link, "SELECT 1 FROM AUDIT LIMIT 1")) {
         $audit = mysqli_query($link, "
-            CREATE TABLE AUDIT(
+            CREATE TABLE IF NOT EXISTS AUDIT(
                 DFname              varchar(50)     NOT NULL,
                 Action              varchar(75)     NOT NULL,
                 Specialty          varchar(50),
@@ -196,17 +196,6 @@
     mysqli_query($link, "INSERT INTO PRESCRIPTION(Date, Pname, P_id, D_id) VALUES('Nov 3', 'Medical Weed', 22222, 'JD2222');");
     mysqli_query($link, "INSERT INTO PRESCRIPTION(Date, Pname, P_id, D_id) VALUES('Nov 4', 'Mushrooms', 89456, 'DS3333');");
 
-
-    // To see the tables
-
-    // $result = mysqli_query($link, "SHOW TABLES;");
-    // while($row = mysqli_fetch_row($result)) {
-    //     foreach ($row as $r) {
-    //         echo $r . " ";
-    //     }
-    // }
-
-
     //***************************NUMBER 2*************************
     //Rob Belkin retiring -- create view of all of his patients' Fname, Lname, and Pnum
     mysqli_query($link, "
@@ -222,8 +211,8 @@
                         );
         ");
     $result = mysqli_query($link, "SELECT * FROM Belkin;");
-    echo "<h5>Doctor Rob Belkin is retiring. We need to inform all his patients, and ask them to select a new doctor. For this purpose, Create a VIEW that finds the names and
-    Phone numbers of all of Rob's patients.</h5>";
+    echo "<h4>Doctor Rob Belkin is retiring. We need to inform all his patients, and ask them to select a new doctor. For this purpose, Create a VIEW that finds the names and
+    Phone numbers of all of Rob's patients.</h4>";
 
     echo "<table border='1'>
     <tr>
@@ -251,7 +240,7 @@
                         WHERE Pname = 'Panadol'
                         );");
 
-    echo "<h5>Create a view which has First Names, Last Names of all doctors who gave out prescription for Panadol.</h5>";
+    echo "<h4>Create a view which has First Names, Last Names of all doctors who gave out prescription for Panadol.</h4>";
 
     $result = mysqli_query($link, "SELECT * FROM Panadol;");
 
@@ -271,18 +260,21 @@
 
     //***************************NUMBER 4*************************
     if(!mysqli_query($link, "
-        DROP VIEW IF EXISTS dspec;
-        CREATE VIEW dspec AS
-        SELECT Fname, Lname, Sname
+        CREATE VIEW IF NOT EXISTS dspec AS
+        SELECT DISTINCT Fname, Lname, Sname
         FROM DOCTOR LEFT JOIN DOCTORSPECIALTY
         ON DOCTOR.D_id = DOCTORSPECIALTY.D_id
         LEFT JOIN SPECIALTY
-        ON SPECIALTY.S_id = DOCTORSPECIALTY.S_id;
-
+        ON SPECIALTY.S_id = DOCTORSPECIALTY.S_id
+        WHERE Sname IS NOT NULL;
     ")) {
         error(__LINE__, mysqli_error($link));
     }
-    echo "<h5>Create a view which shows the First Name and Last name of all doctors and their specialities.</h5>";
+            //RESET dspec?????
+            // if(!mysqli_query($link, "DROP VIEW dspec;")) {
+            //     error(__LINE__, mysqli_error($link));
+            // }
+    echo "<h4>Create a view which shows the First Name and Last name of all doctors and their specialities.</h4>";
 
 
     $result = mysqli_query($link, "SELECT * FROM dspec;");
@@ -303,14 +295,46 @@
     }
     echo "</table>";
 
+        //***************************NUMBER 5*************************
+        if(!mysqli_query($link, "
+        CREATE VIEW IF NOT EXISTS alldspec AS
+        SELECT DISTINCT Fname, Lname, Sname
+        FROM DOCTOR LEFT JOIN DOCTORSPECIALTY
+        ON DOCTOR.D_id = DOCTORSPECIALTY.D_id
+        LEFT JOIN SPECIALTY
+        ON SPECIALTY.S_id = DOCTORSPECIALTY.S_id
+    ")) {
+        error(__LINE__, mysqli_error($link));
+    }
+
+    echo "<h4>Modify the view created in Q4 to show the First Name and Last name of all doctors and their specialties ALSO include doctors who DO NOT have any specialty.</h4>";
+
+
+    $result = mysqli_query($link, "SELECT * FROM alldspec;");
+
+    echo "<table border='1'>
+    <tr>
+    <th>Fname</th>
+    <th>Lname</th>
+    <th>Sname</th>
+    </tr>";
+
+    while($row = mysqli_fetch_array($result)) {
+        echo "<tr>";
+        echo "<td>" . $row['Fname'] . "</td>";
+        echo "<td>" . $row['Lname'] . "</td>";
+        echo "<td>" . $row['Sname'] . "</td>";        
+        echo "</tr>";
+    }
+    echo "</table>";
     //***************************NUMBER 6*************************
         //TRIGGER IS ABOVE INSERTS ^^^^^^^^^^^^^^^^
 
-    echo "<h5>Create trigger on the DOCTORSPECIALTY so that every time a doctor specialty is updated or added, a new entry is made in the audit table. The audit table will have the following (Hint-The trigger will be on DoctorSpecialty table).
+    echo "<h4>Create trigger on the DOCTORSPECIALTY so that every time a doctor specialty is updated or added, a new entry is made in the audit table. The audit table will have the following (Hint-The trigger will be on DoctorSpecialty table).
     a. Doctor’s FirstName
     b. Action(indicate update or added)
     c. Specialty
-    d. Date of modification</h5>";
+    d. Date of modification</h4>";
 
     echo "<table border='1'>
     <tr>
@@ -332,10 +356,10 @@
     echo "</table>";
 
     //***************************NUMBER 7*************************
-    echo "<h5>Create
+    echo "<h4>Create
     a. If first time backup take backup of all the tables
     b. If not the first time remove the previous backup tables and take new
-    a script to do the following (Write the script for this) backups.</h5>";
+    a script to do the following (Write the script for this) backups.</h4>";
 
     if(!mysqli_query($link, "SELECT 1 FROM VISIT_BACKUP LIMIT 1")) {
         $vbackup = mysqli_query($link, "
