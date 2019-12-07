@@ -59,21 +59,5 @@ CREATE TABLE IF NOT EXISTS AUDIT(
     PRIMARY KEY (Action));
 
 
-CREATE TRIGGER insertaudits AFTER INSERT
-    ON DOCTORSPECIALTY
-        FOR EACH ROW
-            INSERT INTO AUDIT SET
-                DFname = (SELECT Fname FROM DOCTOR WHERE D_id = NEW.D_id),
-                Action = 'INSERTED',
-                Specialty = (SELECT Sname FROM SPECIALTY WHERE S_id = NEW.S_id),
-                Date = NOW();
 
-CREATE TRIGGER updateaudits AFTER UPDATE 
-    ON DOCTORSPECIALTY
-        FOR EACH ROW
-            INSERT INTO AUDIT SET
-                DFname = (SELECT Fname FROM DOCTOR WHERE D_id = NEW.D_id),
-                Action = 'UPDATE',
-                Specialty = (SELECT Sname FROM SPECIALTY WHERE S_id = NEW.S_id),
-                DATE = NOW();
             
