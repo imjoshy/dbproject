@@ -58,25 +58,22 @@ CREATE TABLE IF NOT EXISTS AUDIT(
     Date                varchar(25),
     PRIMARY KEY (Action));
 
--- CREATE IF NOT EXISTS TRIGGER insertaudits AFTER INSERT ON DOCTORSPECIALTY FOR EACH ROW
---     BEGIN
---         INSERT INTO AUDIT(DFname, Action, Specialty, Date) VALUES ((SELECT Dname
---                                                                     FROM DOCTOR
---                                                                     WHERE D_id = NEW.D_id), 'INSERT', (SELECT Specialty
---                                                                                                         FROM SPECIALTY
---                                                                                                         WHERE S_id = NEW.S_id), CURRENT_DATE());
---     END
 
--- CREATE IF NOT EXISTS TRIGGER updateaudits AFTER UPDATE ON DOCTORSPECIALTY FOR EACH ROW
---     BEGIN
---         IF OLD.DFname != NEW.Dfname && OLD.Action != NEW.Action && OLD.Specialty != NEW.Specialty && OLD.Date != NEW.Date THEN
---             INSERT INTO AUDIT(DFname, Action, Specialty, Date) VALUES ((SELECT Dname
---                                                                         FROM DOCTOR
---                                                                         WHERE D_id = NEW.D_id), 'UPDATE', (SELECT Specialty
---                                                                                                         FROM SPECIALTY
---                                                                                                         WHERE S_id = NEW.S_id), CURRENT_DATE());
---     END
+CREATE TRIGGER insertaudits AFTER INSERT
+    ON DOCTORSPECIALTY
+        FOR EACH ROW
+            INSERT INTO AUDIT SET
+                DFname = (SELECT Fname FROM DOCTOR WHERE D_id = NEW.D_id),
+                Action = 'INSERTED',
+                Specialty = (SELECT Sname FROM SPECIALTY WHERE S_id = NEW.S_id),
+                Date = NOW();
 
-
-    
-
+CREATE TRIGGER updateaudits AFTER UPDATE 
+    ON DOCTORSPECIALTY
+        FOR EACH ROW
+            INSERT INTO AUDIT SET
+                DFname = (SELECT Fname FROM DOCTOR WHERE D_id = NEW.D_id),
+                Action = 'UPDATE',
+                Specialty = (SELECT Sname FROM SPECIALTY WHERE S_id = NEW.S_id),
+                DATE = NOW();
+            
